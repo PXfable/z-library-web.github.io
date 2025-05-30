@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Z-Library - 全球最大的免费电子书资源平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #5e6ad2;
+            --primary-light: #8a94e0;
+            --primary-dark: #4a56b8;
+            --secondary: #f5f5f7;
+            --accent: #ff6b6b;
+            --text-primary: #1a1a1a;
+            --text-secondary: #6b7280;
+            --bg-light: #ffffff;
+            --bg-dark: #111827;
+            --card-light: #f9fafb;
+            --card-dark: #1f2937;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 12px 24px rgba(0, 0, 0, 0.15);
+            --radius: 16px;
+            --glow: 0 0 15px rgba(94, 106, 210, 0.3);
+        }
+
+        .dark {
+            --bg-light: #111827;
+            --card-light: #1f2937;
+            --text-primary: #f3f4f6;
+            --text-secondary: #d1d5db;
+            --shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+            --shadow-hover: 0 12px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Noto Sans SC', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-primary);
+            transition: var(--transition);
+            line-height: 1.6;
+            background-image: radial-gradient(circle at 1% 1%, rgba(94, 106, 210, 0.05) 0%, transparent 20%);
+        }
+
+        .dark body {
+            background-image: radial-gradient(circle at 1% 1%, rgba(94, 106, 210, 0.05) 0%, transparent 20%), 
+                              linear-gradient(to bottom, #0f172a, #111827);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(12px);
+            background-color: rgba(255, 255, 255, 0.85);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .dark header {
+            background-color: rgba(17, 24, 39, 0.92);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo i {
+            font-size: 32px;
+            color: var(--primary);
+            transition: var(--transition);
+        }
+
+        .logo h1 {
+            font-size: 26px;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .theme-toggle {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--card-light);
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            color: var(--text-primary);
+            box-shadow: var(--shadow);
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary);
+            color: white;
+            transform: rotate(15deg);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            border-radius: 30px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+            font-size: 17px;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: var(--shadow-hover), var(--glow);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .hero {
+            padding: 120px 0 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(94, 106, 210, 0.15) 0%, transparent 70%);
+            z-index: -1;
+        }
+
+        .hero h1 {
+            font-size: 52px;
+            font-weight: 800;
+            margin-bottom: 24px;
+            line-height: 1.2;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero p {
+            font-size: 22px;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 50px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .section {
+            padding: 100px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 70px;
+        }
+
+        .section-title h2 {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 5px;
+            background: var(--primary);
+            border-radius: 3px;
+        }
+
+        .section-title p {
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 30px auto 0;
+            font-size: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 35px;
+        }
+
+        .stat-card {
+            background: var(--card-light);
+            border-radius: var(--radius);
+            padding: 35px 30px;
+            text-align: center;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--primary);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.6s ease;
+        }
+
+        .dark .stat-card {
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(94, 106, 210, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 36px;
+            color: var(--primary);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover .stat-icon {
+            transform: scale(1.1) rotate(5deg);
+            background: rgba(94, 106, 210, 0.2);
+        }
+
+        .stat-number {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            color: var(--primary);
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover .stat-number {
+            letter-spacing: 1px;
+        }
+
+        .stat-desc {
+            color: var(--text-secondary);
+            font-size: 20px;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 35px;
+        }
+
+        .feature-card {
+            background: var(--card-light);
+            border-radius: var(--radius);
+            padding: 35px 30px;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--primary);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.6s ease;
+        }
+
+        .dark .feature-card {
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .feature-card:hover::after {
+            transform: scaleX(1);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            background: rgba(94, 106, 210, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            font-size: 28px;
+            color: var(--primary);
+            transition: var(--transition);
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+            background: rgba(94, 106, 210, 0.2);
+        }
+
+        .feature-card h3 {
+            font-size: 26px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+            flex-grow: 1;
+            font-size: 18px;
+            line-height: 1.7;
+        }
+
+        .feature-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+            font-size: 18px;
+        }
+
+        .feature-link:hover {
+            gap: 15px;
+        }
+
+        .access-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 35px;
+        }
+
+        .access-card {
+            background: var(--card-light);
+            border-radius: var(--radius);
+            padding: 35px 30px;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .access-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--primary);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.6s ease;
+        }
+
+        .dark .access-card {
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .access-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .access-card:hover::after {
+            transform: scaleX(1);
+        }
+
+        .access-card h3 {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 26px;
+            margin-bottom: 25px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .access-card h3 i {
+            font-size: 32px;
+        }
+
+        .access-links {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .access-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 18px;
+            background: rgba(94, 106, 210, 0.05);
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: var(--transition);
+            border-left: 4px solid var(--primary);
+            font-size: 18px;
+        }
+
+        .access-link:hover {
+            background: rgba(94, 106, 210, 0.1);
+            transform: translateX(8px);
+        }
+
+        .access-link i {
+            color: var(--primary);
+            font-size: 22px;
+        }
+
+        .alert {
+            background: rgba(254, 252, 232, 0.6);
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-top: 40px;
+            border-left: 5px solid var(--warning);
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+
+        .dark .alert {
+            background: rgba(113, 63, 18, 0.3);
+        }
+
+        .alert i {
+            color: var(--warning);
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .alert p {
+            color: var(--text-secondary);
+            font-size: 18px;
+            line-height: 1.7;
+        }
+
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 50px;
+            position: relative;
+            padding-left: 50px;
+        }
+
+        .steps::before {
+            content: '';
+            position: absolute;
+            left: 24px;
+            top: 25px;
+            bottom: 25px;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--primary), var(--primary-light));
+            opacity: 0.2;
+            border-radius: 3px;
+        }
+
+        .step {
+            position: relative;
+            padding-left: 50px;
+        }
+
+        .step-number {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 24px;
+            box-shadow: 0 5px 15px rgba(94, 106, 210, 0.3);
+            transition: var(--transition);
+            z-index: 2;
+        }
+
+        .step:hover .step-number {
+            transform: scale(1.1) rotate(10deg);
+            box-shadow: 0 8px 20px rgba(94, 106, 210, 0.4);
+        }
+
+        .step-content {
+            background: var(--card-light);
+            border-radius: var(--radius);
+            padding: 35px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+        }
+
+        .step:hover .step-content {
+            transform: translateX(10px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .dark .step-content {
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .step-content h3 {
+            font-size: 26px;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .step-content p {
+            color: var(--text-secondary);
+            font-size: 18px;
+            line-height: 1.7;
+        }
+
+        .chart-container {
+            background: var(--card-light);
+            border-radius: var(--radius);
+            padding: 40px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            height: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(94, 106, 210, 0.05) 0%, transparent 70%);
+            z-index: 0;
+        }
+
+        .dark .chart-container {
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .chart-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .chart-header h3 {
+            font-size: 32px;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .chart-header p {
+            color: var(--text-secondary);
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        footer {
+            background: var(--card-light);
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 70px 0 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            bottom: -100px;
+            right: -100px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(94, 106, 210, 0.1) 0%, transparent 70%);
+            z-index: 0;
+        }
+
+        .dark footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .copyright {
+            color: var(--text-secondary);
+            text-align: center;
+            font-size: 18px;
+            max-width: 800px;
+            line-height: 1.7;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .social-link {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(94, 106, 210, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 22px;
+            box-shadow: var(--shadow);
+        }
+
+        .social-link:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 38px;
+            }
+            
+            .section-title h2 {
+                font-size: 32px;
+            }
+            
+            .stat-number {
+                font-size: 42px;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .steps {
+                padding-left: 40px;
+            }
+            
+            .step {
+                padding-left: 40px;
+            }
+            
+            .step-number {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+            
+            .chart-container {
+                height: 400px;
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-book-open"></i>
+                    <h1>ZLibrary</h1>
+                </div>
+                <div class="nav-actions">
+                    <button class="theme-toggle" id="theme-toggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <a href="https://pan.quark.cn/s/3231f196278d" class="btn btn-primary">
+                        <i class="fas fa-download"></i> 下载客户端
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1 class="fade-in">全球最大的免费电子书资源平台</h1>
+            <p class="fade-in">ZLibrary成立于2009年，致力于推动教育平等，使每个人都能轻松获取知识</p>
+            <div class="btn-group">
+                <a href="#resources" class="btn btn-primary fade-in">
+                    <i class="fas fa-search"></i> 探索资源
+                </a>
+                <a href="#how-to" class="btn btn-outline fade-in">
+                    <i class="fas fa-question-circle"></i> 使用指南
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>ZLibrary资源概览</h2>
+                <p>我们提供海量电子书和学术期刊资源，满足您的各种需求</p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card fade-in">
+                    <div class="stat-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="stat-number">2300万+</div>
+                    <p class="stat-desc">涵盖文学、科学、技术、历史等广泛领域</p>
+                </div>
+                <div class="stat-card fade-in">
+                    <div class="stat-icon">
+                        <i class="fas fa-newspaper"></i>
+                    </div>
+                    <div class="stat-number">8400万+</div>
+                    <p class="stat-desc">每日更新，确保获取最新知识</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>访问入口</h2>
+                <p>通过以下官方入口或客户端访问ZLibrary资源</p>
+            </div>
+            <div class="access-grid">
+                <div class="access-card fade-in">
+                    <h3><i class="fas fa-globe"></i> 官方入口</h3>
+                    <div class="access-links">
+                        <a href="https://zh.z-library.sk/" class="access-link" target="_blank">
+                            <i class="fas fa-link"></i> https://zh.z-library.sk
+                        </a>
+                        <a href="https://zh.z-lib.gd/" class="access-link" target="_blank">
+                            <i class="fas fa-link"></i> https://zh.z-lib.gd
+                        </a>
+                        <a href="https://zh.z-lib.gs/" class="access-link" target="_blank">
+                            <i class="fas fa-link"></i> https://zh.z-lib.gs
+                        </a>
+                    </div>
+                </div>
+                <div class="access-card fade-in">
+                    <h3><i class="fas fa-server"></i> 客户端下载</h3>
+                    <div class="access-links">
+                        <a href="https://pan.quark.cn/s/31a99444fe7f" class="access-link" target="_blank">
+                            <i class="fab fa-android"></i> 安卓app安装包
+                        </a>
+                        <a href="https://pan.quark.cn/s/e63fdf9e72bf" class="access-link" target="_blank">
+                            <i class="fab fa-windows"></i> Windows电脑安装包
+                        </a>
+                        <a href="https://pan.quark.cn/s/57432f5b6bd5" class="access-link" target="_blank">
+                            <i class="fab fa-apple"></i> Mac电脑安装包
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="alert fade-in">
+                <i class="fas fa-info-circle"></i>
+                <p>注意：由于部分地区网络限制，建议用户优先使用官方推荐的客户端或镜像站点访问资源。部分镜像地址可能会失效，用户可以通过关注ZLibrary的Telegram账号获取最新可用链接。</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>功能特点</h2>
+                <p>ZLibrary提供强大的功能，让您的阅读体验更加完美</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3>海量资源</h3>
+                    <p>覆盖广泛学科领域，包括小说、学术论文、专业书籍等，满足不同用户需求。</p>
+                    <a href="#" class="feature-link">
+                        了解更多 <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>便捷搜索与下载</h3>
+                    <p>未注册用户每天可免费下载5本书籍，注册后提升至10本，支持多种格式下载。</p>
+                    <a href="#" class="feature-link">
+                        了解更多 <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-cog"></i>
+                    </div>
+                    <h3>个性化推荐</h3>
+                    <p>根据用户的阅读历史和偏好，提供个性化书籍推荐功能，提升阅读体验。</p>
+                    <a href="#" class="feature-link">
+                        了解更多 <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>离线阅读与多平台兼容</h3>
+                    <p>支持离线阅读功能，用户可以将书籍保存到本地设备上，随时随地进行阅读。</p>
+                    <a href="#" class="feature-link">
+                        了解更多 <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3>社交互动与分享</h3>
+                    <p>用户可以在平台上留言、评论、评分和分享书籍，与其他读者互动交流。</p>
+                    <a href="#" class="feature-link">
+                        了解更多 <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3>镜像站点与客户端下载</h3>
+                    <p>提供多个镜像站点和客户端下载链接，确保用户能够稳定访问其资源。</p>
+                    <a href="#" class="feature-link">
+                        了解更多 <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="how-to">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>使用指南</h2>
+                <p>只需简单几步，即可开始您的知识探索之旅</p>
+            </div>
+            <div class="steps">
+                <div class="step fade-in">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>注册与登录</h3>
+                        <p>用户需点击页面右上角的"注册"按钮，输入邮箱并完成验证。也可以选择Google、Facebook等第三方账号快速登录。</p>
+                    </div>
+                </div>
+                <div class="step fade-in">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>搜索与筛选</h3>
+                        <p>在搜索栏输入关键词，结合筛选条件缩小范围。例如，可以根据作者、出版日期或格式筛选书籍。</p>
+                    </div>
+                </div>
+                <div class="step fade-in">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>下载与阅读</h3>
+                        <p>点击书籍详情页中的下载按钮，选择所需格式（如PDF、ePub）。下载完成后，用户可以在本地设备上打开并阅读。</p>
+                    </div>
+                </div>
+                <div class="step fade-in">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>管理资源</h3>
+                        <p>在"我的书架"中管理已下载的书籍，包括查看下载历史、删除书籍等操作。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="resources">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>资源分布</h2>
+                <p>我们的资源涵盖了广泛的学科领域</p>
+            </div>
+            
+            <div class="chart-container fade-in">
+                <div class="chart-header">
+                    <h3>电子书分类分布</h3>
+                    <p>2300万+电子书按照学科领域分布情况</p>
+                </div>
+                <canvas id="resourceChart"></canvas>
+            </div>
+            
+            <div class="features-grid" style="margin-top: 60px;">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h3>文学类资源</h3>
+                    <p>小说、诗歌、戏剧等文学作品，包含世界经典文学和现代流行作品，占比35%。</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-flask"></i>
+                    </div>
+                    <h3>科学类资源</h3>
+                    <p>自然科学、物理学、化学、生物学等科学领域著作，占比25%。</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-laptop-code"></i>
+                    </div>
+                    <h3>技术类资源</h3>
+                    <p>计算机科学、工程技术、软件开发等技术领域专业书籍，占比20%。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo fade-in">
+                    <i class="fas fa-book-open"></i>
+                    <span>ZLibrary</span>
+                </div>
+                <div class="social-links">
+                    <a href="#" class="social-link fade-in">
+                        <i class="fab fa-telegram"></i>
+                    </a>
+                    <a href="#" class="social-link fade-in">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="social-link fade-in">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="#" class="social-link fade-in">
+                        <i class="fab fa-github"></i>
+                    </a>
+                </div>
+                <p class="copyright fade-in">© 2025 ZLibrary. 保留所有权利。全球最大的免费电子书资源平台</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 确保在DOM完全加载后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 主题切换功能
+            const themeToggle = document.getElementById('theme-toggle');
+            const body = document.body;
+            const moonIcon = themeToggle.querySelector('.fa-moon');
+            const sunIcon = document.createElement('i');
+            sunIcon.className = 'fas fa-sun';
+            sunIcon.style.display = 'none';
+            
+            // 资源分布图表数据
+            const resourceData = {
+                labels: ['文学', '科学', '技术', '历史', '艺术', '其他'],
+                datasets: [{
+                    data: [35, 25, 20, 10, 5, 5],
+                    backgroundColor: [
+                        '#5E6AD2', 
+                        '#8A94E0', 
+                        '#C4C9F5', 
+                        '#E2E8F0', 
+                        '#F8FAFC', 
+                        '#F1F5F9'
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 20,
+                    hoverBackgroundColor: [
+                        '#4a56b8', 
+                        '#6e7ad4', 
+                        '#a7b0f0', 
+                        '#cbd3e6', 
+                        '#eef2f9', 
+                        '#dde3f0'
+                    ]
+                }]
+            };
+            
+            // 检查用户主题偏好
+            if (localStorage.getItem('theme') === 'dark') {
+                body.classList.add('dark');
+                moonIcon.style.display = 'none';
+                sunIcon.style.display = 'block';
+            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                body.classList.add('dark');
+                moonIcon.style.display = 'none';
+                sunIcon.style.display = 'block';
+            }
+    
+            themeToggle.appendChild(sunIcon);
+    
+            themeToggle.addEventListener('click', () => {
+                body.classList.toggle('dark');
+                
+                if (body.classList.contains('dark')) {
+                    moonIcon.style.display = 'none';
+                    sunIcon.style.display = 'block';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    moonIcon.style.display = 'block';
+                    sunIcon.style.display = 'none';
+                    localStorage.setItem('theme', 'light');
+                }
+                
+                // 重新初始化图表以适应新主题
+                initChart();
+            });
+    
+            // 资源分布图表
+            let resourceChart = null;
+            
+            function initChart() {
+                const ctx = document.getElementById('resourceChart').getContext('2d');
+                const isDarkMode = body.classList.contains('dark');
+                
+                // 如果已经存在图表实例，先销毁
+                if (resourceChart) {
+                    resourceChart.destroy();
+                }
+                
+                try {
+                    resourceChart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: resourceData,
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'right',
+                                    labels: {
+                                        font: {
+                                            size: 16,
+                                            family: "'Segoe UI', 'Noto Sans SC', sans-serif"
+                                        },
+                                        color: isDarkMode ? '#d1d5db' : '#4b5563',
+                                        padding: 20,
+                                        generateLabels: (chart) => {
+                                            const datasets = chart.data.datasets;
+                                            return chart.data.labels.map((label, i) => {
+                                                const value = datasets[0].data[i];
+                                                return {
+                                                    text: `${label}: ${value}%`,
+                                                    fillStyle: datasets[0].backgroundColor[i],
+                                                    strokeStyle: datasets[0].backgroundColor[i],
+                                                    hidden: false,
+                                                    index: i
+                                                };
+                                            });
+                                        }
+                                    }
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: (context) => {
+                                            const label = context.label || '';
+                                            const value = context.raw || 0;
+                                            return `${label}: ${value}万册 (${(value/100*23).toFixed(1)}百万册)`;
+                                        }
+                                    },
+                                    bodyFont: {
+                                        size: 16,
+                                        family: "'Segoe UI', 'Noto Sans SC', sans-serif"
+                                    },
+                                    titleFont: {
+                                        size: 18,
+                                        weight: 'bold',
+                                        family: "'Segoe UI', 'Noto Sans SC', sans-serif"
+                                    },
+                                    padding: 15,
+                                    backgroundColor: isDarkMode ? 'rgba(31, 41, 55, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+                                    titleColor: isDarkMode ? '#d1d5db' : '#1a1a1a',
+                                    bodyColor: isDarkMode ? '#d1d5db' : '#4b5563',
+                                    borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+                                    borderWidth: 1
+                                },
+                                title: {
+                                    display: false
+                                }
+                            },
+                            cutout: '60%',
+                            animation: {
+                                animateRotate: true,
+                                animateScale: true,
+                                duration: 1500,
+                                easing: 'easeOutQuart'
+                            },
+                            layout: {
+                                padding: 20
+                            },
+                            elements: {
+                                arc: {
+                                    borderWidth: 0,
+                                    borderRadius: 5
+                                }
+                            }
+                        }
+                    });
+                } catch (e) {
+                    console.error("图表初始化失败:", e);
+                    // 如果图表初始化失败，显示错误信息
+                    document.querySelector('.chart-header').innerHTML += 
+                        '<p style="color: var(--danger);">图表加载失败，请刷新页面或检查浏览器兼容性</p>';
+                }
+            }
+    
+            // 初始化图表
+            initChart();
+            
+            // 滚动动画效果
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            fadeElements.forEach(element => {
+                observer.observe(element);
+            });
+
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
